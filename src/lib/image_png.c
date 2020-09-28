@@ -50,7 +50,7 @@ int s_image_png (char *file, s_image_t *img)
 	png_byte color_type;
 	int number_of_passes;
 	png_bytep *row_pointers;
-	
+
 	fp = fopen(file, "rb");
 	if (!fp) {
 		debugf(DFAT, "Could not open file %s", file);
@@ -59,7 +59,7 @@ int s_image_png (char *file, s_image_t *img)
 	if (png_sig_cmp((png_bytep) header, 0, 8)) {
 		debugf(DFAT, "File is not a PNG file %s", file);
 	}
-	
+
 	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!png_ptr) {
 		debugf(DFAT, "png_create_read_struct failed");
@@ -73,34 +73,34 @@ int s_image_png (char *file, s_image_t *img)
 	if (setjmp(png_jmpbuf(png_ptr))) {
 		debugf(DFAT, "setjmp failed");
 	}
-	
+
 	png_init_io(png_ptr, fp);
 	png_set_sig_bytes(png_ptr, 8);
 	png_read_info(png_ptr, info_ptr);
-	width = info_ptr->width;
-	height = info_ptr->height;                                                 	
-	color_type = info_ptr->color_type;
-	bit_depth = info_ptr->bit_depth;
+	width = png_get_image_width(png_ptr,  info_ptr);
+	height = png_get_image_height(png_ptr,  info_ptr);
+        color_type = png_get_color_type(png_ptr,  info_ptr);
+	bit_depth = png_get_bit_depth(png_ptr,  info_ptr);
 	number_of_passes = png_set_interlace_handling(png_ptr);
 	png_read_update_info(png_ptr, info_ptr);
-	
+
 	if (setjmp(png_jmpbuf(png_ptr))) {
 		debugf(DFAT, "Error during read_image");
 	}
 
 	row_pointers = (png_bytep *) s_malloc(sizeof(png_bytep) * height);
 	for (y = 0; y < height; y++) {
-		row_pointers[y] = (png_byte* ) s_malloc(info_ptr->rowbytes);
+		row_pointers[y] = (png_byte* ) s_malloc(png_get_rowbytes(png_ptr, info_ptr));
 	}
 
         png_read_image(png_ptr, row_pointers);
-	
+
 	img->w = width;
 	img->h = height;
 	img->rgba = (unsigned int *) s_calloc(1, img->w * img->h * sizeof(unsigned int));
 	tmp = img->rgba;
 
-	if (info_ptr->color_type == PNG_COLOR_TYPE_RGBA) {
+	if (color_type == PNG_COLOR_TYPE_RGBA) {
 		for (y = 0; y < height; y++) {
 			png_byte *row = row_pointers[y];
 			for (x = 0; x < width; x++) {
@@ -116,7 +116,7 @@ int s_image_png (char *file, s_image_t *img)
 				tmp++;
 			}
 		}
-	} else if (info_ptr->color_type == PNG_COLOR_TYPE_RGB) {
+	} else if (color_type == PNG_COLOR_TYPE_RGB) {
 		for (y = 0; y < height; y++) {
 			png_byte *row = row_pointers[y];
 			for (x = 0; x < width; x++) {
@@ -132,7 +132,12 @@ int s_image_png (char *file, s_image_t *img)
 				tmp++;
 			}
 		}
-	} else if (info_ptr->color_type == PNG_COLOR_TYPE_PALETTE) {
+	} else if (color_type == PNG_COLOR_TYPE_PALETTE) {
+		int info_ptr_num_palette = 0;
+		int info_ptr_num_trans = 0;
+		png_bytep trans = NULL;
+		png_colorp png_palette = NULL;
+
 		int i;
 		struct Palette {
 			int r;
@@ -143,17 +148,17 @@ int s_image_png (char *file, s_image_t *img)
 		struct Palette *pal;
 		pal = (struct Palette *) s_malloc(256 * sizeof(struct Palette));
 		memset(pal, 0, 256 * sizeof(struct Palette));
-		
+
 		for (i = 0; i < 256; i++) {
 			pal[i].a = 255;
 		}
-		
-		for (i = 0; i < info_ptr->num_palette; i++) {
-			pal[i].r = info_ptr->palette[i].red;
-			pal[i].g = info_ptr->palette[i].green;
-			pal[i].b = info_ptr->palette[i].blue;
-			if (i < info_ptr->num_trans) {
-				pal[i].a = info_ptr->trans[i];
+
+		for (i = 0; i < info_ptr_num_palette; i++) {
+			pal[i].r = png_palette[i].red;
+			pal[i].g = png_palette[i].green;
+			pal[i].b = png_palette[i].blue;
+			if (i < info_ptr_num_trans) {
+				pal[i].a = png_get_tRNS(png_ptr,info_ptr, &trans[i], &info_ptr_num_trans, NULL);
 			}
 		}
 
@@ -170,19 +175,19 @@ int s_image_png (char *file, s_image_t *img)
 		}
 		s_free(pal);
 	} else {
-		debugf(DFAT, "Unknown color_type : %d (%s)", info_ptr->color_type, file);
+		debugf(DFAT, "Unknown color_type : %d (%s)", color_type, file);
 	}
 
 	for (y = 0; y < height; y++) {
 		s_free(row_pointers[y]);
 	}
 	s_free(row_pointers);
-	
+
 	png_destroy_info_struct(png_ptr, &info_ptr);
 	png_destroy_read_struct(&png_ptr, NULL, NULL);
-	
+
 	fclose(fp);
-	
+
 	return 0;
 }
 
