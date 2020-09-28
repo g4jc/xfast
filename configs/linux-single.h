@@ -1,13 +1,13 @@
 /*
  * Automatically generated C config: don't edit
- * XFast version: 
+ * XFast version:
  * Sun Apr 20 22:43:26 2008
  */
 #define AUTOCONF_INCLUDED
 #define CONFIG_WIDGET_STATIC 1
 #define CONFIG_PATH_SHARE "share/xfast"
 #define CONFIG_DEMO_TIMER 1
-#define CONFIG_VIDEO_VESA 1
+#undef CONFIG_VIDEO_VESA
 #define CONFIG_VIDEO_HELPER_CONSOLE 1
 #define CONFIG_DEMO_APPLICATIONS 1
 #define CONFIG_VIDEO_NULL 1
@@ -60,7 +60,7 @@
 #define CONFIG_POLL_POLL 1
 #define CONFIG_THEME_KERAMIK 1
 #define CONFIG_WIDGET_SHARED 1
-#define CONFIG_VIDEO_SVGALIB 1
+#undef CONFIG_VIDEO_SVGALIB
 #define CONFIG_CONFIGURED 1
 #define CONFIG_DEMO_IMAGE 1
 #define CONFIG_DEMO_CHILD 1
