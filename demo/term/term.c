@@ -73,7 +73,7 @@ static struct {
 	int y1;
 } scroll_reg = {1, SCREENH};
 
-extern int getpt (void);
+//extern int posix_openpt (void);
 extern int grantpt (int);
 extern int unlockpt (int);
 
@@ -143,7 +143,7 @@ static void get_pty (void)
         int fd;
 	extern char *ptsname();
 
-	if ((fd = getpt()) >= 0) {
+	if ((fd = posix_openpt(O_RDWR | O_NOCTTY)) >= 0) {
 		if ((grantpt(fd) == 0) && (unlockpt(fd) == 0)) {
 			ptydev = ptsname(fd);
 			if ((slave = open(ptydev, O_RDWR | O_NOCTTY)) < 0) {

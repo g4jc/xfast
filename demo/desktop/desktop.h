@@ -23,7 +23,6 @@
 #include <fcntl.h>
 #include <time.h>
 #include <unistd.h>
-#include <sys/unistd.h>
 #include "xfast_.h"
 
 typedef enum {
