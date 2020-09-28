@@ -1,0 +1,5 @@
+#!/bin/sh
+
+xfast &
+sleep 2
+desktop &

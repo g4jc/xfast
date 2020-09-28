@@ -1,0 +1,12 @@
+#!/bin/bash
+
+echo "Script Starting.."
+
+cd .
+for pic in $(ls *.gif)
+do
+	echo "converting $pic"
+	convert $pic $(basename $pic .gif).xpm
+done
+echo "finished"
+

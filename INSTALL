@@ -1,0 +1,26 @@
+
+Edit xfast.conf for your needs
+
+# make menuconfig
+# make all
+# make dist
+# make install
+
+You may also use defult configs with;
+
+make linux        - linux default configuration
+make linux-single - linux single app configuration
+make mingw        - mingw default configuration
+make pspdev       - pspdev default configuration
+make gp2x         - gp2x default configuration
+
+after instalation xfast.conf will be located at $(CONFDIR).
+
+to start it execute
+
+startxfast
+
+or
+
+xfast& sleep 2; term
+

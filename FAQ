@@ -1,0 +1,19 @@
+Look what we have, quick answers to easy questions ;)
+    
+Questions;
+    
+    Q1. I get blank screen when I open XFast ?
+    
+    Q2. I could not find any question that refers to my problem?
+    
+Answers;
+
+    Q1. I get blank screen when I open XFast ?
+    
+    A1. Change screen mode from your xfast.conf file
+    
+        mode = WidthxHeightxColors
+
+    Q2. I could not find any question that refers to my problem?
+
+    A2. At this point you should read BUGS file.

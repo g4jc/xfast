@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Using this script a new theme can be created. The one and only parameter that is
+# required: the name of the new theme. The themes images have to be located in
+# src/themes using a subfolder with the same name of the theme
+
+
+if [ -n "$1" ]; then
+   make
+   ./theme $1 ../../src/themes/$1/ > ../../src/themes/$1/$1.c
+   echo "...done!"
+else
+   echo "Error: please give the name of the new theme as parameter!"
+fi
+
